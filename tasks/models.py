@@ -5,7 +5,7 @@ from django.db.models import Q, F
 
 
 class Task(models.Model):
-
+ 
     STATUS_CHOICES = [
         ("todo", "To Do"),
         ("in_progress", "In Progress"),
