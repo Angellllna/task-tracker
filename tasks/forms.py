@@ -12,3 +12,28 @@ class TaskForm(forms.ModelForm):
                 attrs={"type": "date", "class": "form-control"}
             ),
         }
+
+class TaskFilterForm(forms.Form):
+    status = forms.ChoiceField(
+        choices=[('', 'Усі')] + Task.STATUS_CHOICES,
+        required=False,
+        label='Статус'
+    )
+
+    priority = forms.ChoiceField(
+        choices=[('', 'Усі')] + Task.PRIORITY_CHOICES,
+        required=False,
+        label='Пріоритет'
+    )
+
+    due_date = forms.DateField(
+        required=False,
+        label='Дата виконання',
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

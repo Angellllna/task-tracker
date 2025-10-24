@@ -1,25 +1,97 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-  <h1>📋 Список завдань</h1>
 
-  {% if tasks %}
-    <ul>
-      {% for task in tasks %}
-        <li>
-          <a href="{% url 'tasks:task_detail' task.id %}">
-            {{ task.title }}
-          </a>
-          {% if task.completed %}
-            ✅
+<h2 style="text-align:center;">Мої завдання</h2>
+
+<!-- 🔍 Форма фільтрації -->
+<form method="get" style="margin: 20px auto; max-width: 700px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div style="flex: 1;">
+      <label for="id_status">Статус:</label>
+      {{ form.status }}
+    </div>
+    <div style="flex: 1;">
+      <label for="id_priority">Пріоритет:</label>
+      {{ form.priority }}
+    </div>
+    <div style="flex: 1;">
+      <label for="id_due_date">Дата виконання:</label>
+      {{ form.due_date }}
+    </div>
+  </div>
+
+  <div style="margin-top: 10px; text-align: right;">
+    <button type="submit" style="background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 5px;">Фільтрувати</button>
+    <a href="{% url 'tasks:task_list' %}" style="margin-left: 10px; text-decoration: none; color: #555;">Скинути</a>
+  </div>
+</form>
+
+<!-- ➕ Кнопка додавання -->
+<div style="text-align: center; margin: 20px 0;">
+  <a href="{% url 'tasks:task_create' %}"
+     style="background-color: #28a745; color: white; padding: 10px 20px;
+            border-radius: 6px; text-decoration: none; font-weight: bold;">
+    + Додати завдання
+  </a>
+</div>
+
+<hr>
+
+<!-- 📋 Таблиця завдань -->
+<table style="width: 100%; border-collapse: collapse; font-family: sans-serif;">
+  <thead>
+    <tr style="background-color: #f4f4f4;">
+      <th style="border: 1px solid #ccc; padding: 8px;">Назва</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Статус</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Пріоритет</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Дата</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Дії</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for task in tasks %}
+      <tr>
+        <td style="border: 1px solid #ccc; padding: 8px;">{{ task.title }}</td>
+
+        <!-- 🎨 кольори для статусів -->
+        <td style="border: 1px solid #ccc; padding: 8px;
+          {% if task.status == 'todo' %}background-color:#f8d7da;{% endif %}
+          {% if task.status == 'in_progress' %}background-color:#fff3cd;{% endif %}
+          {% if task.status == 'done' %}background-color:#d4edda;{% endif %}
+        ">
+          {{ task.get_status_display }}
+        </td>
+
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          {% if task.priority == 'high' %}
+            <span style="color: red; font-weight: bold;">{{ task.get_priority_display }}</span>
+          {% elif task.priority == 'medium' %}
+            <span style="color: orange;">{{ task.get_priority_display }}</span>
           {% else %}
-            ⏳
+            <span style="color: green;">{{ task.get_priority_display }}</span>
           {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Поки що немає жодного завдання.</p>
-  {% endif %}
+        </td>
 
-  <p><a href="{% url 'tasks:task_create' %}">➕ Створити нове завдання</a></p>
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          {% if task.due_date %}
+            {{ task.due_date|date:"d.m.Y" }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+
+        <td style="border: 1px solid #ccc; padding: 8px;">
+          <a href="{% url 'tasks:task_detail' task.pk %}">Деталі</a> |
+          <a href="{% url 'tasks:task_update' task.pk %}">Редагувати</a> |
+          <a href="{% url 'tasks:task_delete' task.pk %}">Видалити</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" style="text-align:center; padding: 20px;">Завдань немає 😌</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
