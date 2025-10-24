@@ -1,24 +1,46 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
 
-  
+<h2>{{ object.title }}</h2>
+<p><strong>Опис:</strong> {{ object.description }}</p>
+<p><strong>Статус:</strong> {{ object.get_status_display }}</p>
+<p><strong>Пріоритет:</strong> {{ object.get_priority_display }}</p>
+<p><strong>Дата виконання:</strong> {{ object.due_date|date:"d.m.Y" }}</p>
 
-  <h1>📝 Деталі завдання</h1>
+<hr>
 
-  <h2>{{ task.title }}</h2>
-  <p><strong>Опис:</strong> {{ task.description|default:"(немає опису)" }}</p>
-  <p><strong>Створено:</strong> {{ task.created_at|date:"d.m.Y H:i" }}</p>
-  <p><strong>Оновлено:</strong> {{ task.updated_at|date:"d.m.Y H:i" }}</p>
+<h3>💬 Коментарі</h3>
 
-  {% if task.completed %}
-    <p style="color: green;"><strong>Статус:</strong> виконано ✅</p>
-  {% else %}
-    <p style="color: orange;"><strong>Статус:</strong> у процесі ⏳</p>
-  {% endif %}
-  <p>
-  <a href="{% url 'tasks:task_update' task.id %}" class="btn btn-primary">✏️ Редагувати</a>
-  <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-danger">🗑️ Видалити</a>
-</p>
+{% for comment in comments %}
+  <div style="border:1px solid #ddd; border-radius:6px; padding:8px; margin-bottom:10px;">
+    <strong>{{ comment.author.username }}</strong>
+    <small style="color:gray;">({{ comment.created_at|date:"d.m.Y H:i" }})</small>
+    <p>{{ comment.content }}</p>
+  <form method="post" action="{% url 'tasks:comment_like' comment.pk %}">
+  {% csrf_token %}
+  <button type="submit">❤️ {{ comment.likes.count }}</button>
+</form>
 
-  <p><a href="{% url 'tasks:task_list' %}">← Назад до списку</a></p>
+    {% if comment.author == user %}
+      <a href="{% url 'tasks:comment_edit' comment.pk %}">✏️ Редагувати</a> |
+      <a href="{% url 'tasks:comment_delete' comment.pk %}">🗑️ Видалити</a>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>Поки що немає коментарів.</p>
+{% endfor %}
+
+<hr>
+
+{% if user.is_authenticated %}
+<h4>Додати коментар</h4>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Додати</button>
+</form>
+{% else %}
+<p><a href="{% url 'login' %}">Увійдіть</a>, щоб залишити коментар.</p>
+{% endif %}
+
 {% endblock %}

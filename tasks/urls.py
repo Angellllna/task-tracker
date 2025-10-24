@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, TaskDeleteView, RegisterView
+from .views import TaskListView, TaskDetailView, TaskCreateView, TaskUpdateView, RegisterView, TaskDeleteView, CommentEditView, CommentDeleteView, ToggleLikeView
 
 app_name = "tasks"
 urlpatterns = [
@@ -12,4 +12,9 @@ urlpatterns = [
     path("<int:pk>/delete/", TaskDeleteView.as_view(), name="task_delete"),
 
     path('register/', RegisterView.as_view(), name='register'),
+
+    path("comment/<int:pk>/edit/", CommentEditView.as_view(), name="comment_edit"),
+    path("comment/<int:pk>/delete/", CommentDeleteView.as_view(), name="comment_delete"),
+    path("comment/<int:pk>/like/", ToggleLikeView.as_view(), name="comment_like"),
+
 ]
