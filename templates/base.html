@@ -102,7 +102,7 @@
       {% if user.is_authenticated %}
         <form action="{% url 'logout' %}" method="post" class="logout-form">
           {% csrf_token %}
-          <button type="submit">🚪 Вийти</button>
+          <button type="submit" >🚪 Вийти</button>
         </form>
       {% else %}
         <a href="{% url 'login' %}">🔑 Увійти</a>

@@ -1,7 +1,6 @@
-from .models import Comment
 from django import forms
 
-from .models import Task
+from .models import Task, Comment
 
 
 class TaskForm(forms.ModelForm):

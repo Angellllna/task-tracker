@@ -15,6 +15,7 @@ urlpatterns = [
 
     path("comment/<int:pk>/edit/", CommentEditView.as_view(), name="comment_edit"),
     path("comment/<int:pk>/delete/", CommentDeleteView.as_view(), name="comment_delete"),
+    
     path("comment/<int:pk>/like/", ToggleLikeView.as_view(), name="comment_like"),
 
 ]
